@@ -1,7 +1,7 @@
 # --
-# File: malware_connector.py
+# File: malshare_connector.py
 #
-# Copyright (c) Phantom Cyber Corporation, 2016-2017
+# Copyright (c) Phantom Cyber Corporation, 2017
 #
 # This unpublished material is proprietary to Phantom Cyber.
 # All rights reserved. The methods and
@@ -106,14 +106,14 @@ class MalshareConnector(BaseConnector):
                 if r.text[:1] == "{" or r.text[:1] == "[":
                     return RetVal(phantom.APP_SUCCESS, json.loads(r.text))
 
-            # Responses for get_hash_list will just be an ascii list of MD5 separated by spaces
-            elif self.get_action_identifier() == "get_hash_list":
+            # Responses for list_hashes will just be an ascii list of MD5 separated by spaces
+            elif self.get_action_identifier() == "list_hashes":
                 hashlist_test = self._process_test_hash_list(r, action_result)
                 if hashlist_test[0] == phantom.APP_SUCCESS:
                     return hashlist_test
 
-            # Responses for get_sources_list will just be an ascii list of URLs separated by spaces
-            elif self.get_action_identifier() == "get_sources_list":
+            # Responses for list_urls will just be an ascii list of URLs separated by spaces
+            elif self.get_action_identifier() == "list_urls":
                 if r.text[:4] == "http":
                     return RetVal(phantom.APP_SUCCESS, r.text.split())
 
@@ -165,7 +165,7 @@ class MalshareConnector(BaseConnector):
         self.save_progress("Test Connectivity Passed")
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_get_hash_list(self, param):
+    def _handle_list_hashes(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -180,9 +180,8 @@ class MalshareConnector(BaseConnector):
         hash_count = 0
 
         for hash_entry in response:
-            if len(hash_entry) == 32:
-                action_result.add_data({"md5": hash_entry})
-                hash_count += 1
+            action_result.add_data({"md5": hash_entry})
+            hash_count += 1
 
         action_result.update_summary({'hash_count': hash_count})
 
@@ -193,7 +192,7 @@ class MalshareConnector(BaseConnector):
             self.save_progress(str(hash_count) + " hashes found in hash list")
             return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _handle_get_sources_list(self, param):
+    def _handle_list_urls(self, param):
         self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
 
         action_result = self.add_action_result(ActionResult(dict(param)))
@@ -348,11 +347,11 @@ class MalshareConnector(BaseConnector):
         if action_id == 'test_connectivity':
             ret_val = self._handle_test_connectivity(param)
 
-        elif action_id == 'get_hash_list':
-            ret_val = self._handle_get_hash_list(param)
+        elif action_id == 'list_hashes':
+            ret_val = self._handle_list_hashes(param)
 
-        elif action_id == 'get_sources_list':
-            ret_val = self._handle_get_sources_list(param)
+        elif action_id == 'list_urls':
+            ret_val = self._handle_list_urls(param)
 
         elif action_id == 'get_file_info':
             ret_val = self._handle_get_file_info(param)

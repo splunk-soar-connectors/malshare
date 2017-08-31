@@ -1,7 +1,7 @@
 {
     "appid": "7729b756-27d2-4d46-87e2-443c9aad6813",
     "name": "MalShare",
-    "description": "This app implements fetching lists and individual samples of malware from MalShare.",
+    "description": "This app implements fetching lists and individual samples of malware from MalShare",
     "type": "information",
     "product_vendor": "MalShare",
     "logo": "malshare.png",
@@ -38,8 +38,8 @@
             "versions": "EQ(*)"
         },
         {
-            "action": "get hash list",
-            "identifier": "get_hash_list",
+            "action": "list hashes",
+            "identifier": "list_hashes",
             "type": "investigate",
             "read_only": true,
             "description": "List MD5 hashes from the past 24 hours",
@@ -102,11 +102,11 @@
             }
         },
         {
-            "action": "get url list",
-            "identifier": "get_sources_list",
+            "action": "list urls",
+            "identifier": "list_urls",
             "type": "investigate",
             "read_only": true,
-            "description": "List of sample sources from the past 24 hours.",
+            "description": "List of sample sources from the past 24 hours",
             "parameters": {},
             "versions": "EQ(*)",
             "output": [
@@ -169,12 +169,12 @@
         {
             "action": "get file info",
             "identifier": "get_file_info",
-            "description": "Get details (file type, hashes, source) of the stored file.",
+            "description": "Get details (file type, hashes, source) of the stored file",
             "type": "investigation",
             "read_only": true,
             "parameters": {
                 "hash": {
-                    "description": "the hash of the file to be queried",
+                    "description": "The hash of the file to be queried",
                     "data_type": "string",
                     "contains": [
                         "sha256",
@@ -408,12 +408,12 @@
         {
             "action": "get file",
             "identifier": "get_file",
-            "description": "Get file matching supplied hash.",
+            "description": "Get file matching supplied hash",
             "type": "investigation",
             "read_only": true,
             "parameters": {
                 "hash": {
-                    "description": "the hash of the file to be queried",
+                    "description": "The hash of the file to be queried",
                     "data_type": "string",
                     "contains": [
                         "sha256",
