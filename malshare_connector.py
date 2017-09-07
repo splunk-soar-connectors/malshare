@@ -94,28 +94,28 @@ class MalshareConnector(BaseConnector):
 
             # get_file_info and get_file can return this message in a 200 if a hash isn't found
             if self.get_action_identifier() == "get_file_info" or self.get_action_identifier() == "get_file":
-                if r.text[:24] == "Sample not found by hash":
+                if 'sample not found by hash' in r.text.lower():
                     return RetVal(phantom.APP_SUCCESS, None)
 
             # When downloading samples we need to accept basically anything
             if self.get_action_identifier() == "get_file":
                 return RetVal(phantom.APP_SUCCESS, r.content)
 
-            # Responses for get_filetype_hashes and get_file_info will come back as JSON
-            elif self.get_action_identifier() == "get_filetype_hashes" or self.get_action_identifier() == "get_file_info":
+            # Responses for list_hashes (when a file type is supplied) and get_file_info will come back as JSON
+            elif self.get_action_identifier() == "list_hashes" or self.get_action_identifier() == "get_file_info":
                 if r.text[:1] == "{" or r.text[:1] == "[":
                     return RetVal(phantom.APP_SUCCESS, json.loads(r.text))
-
-            # Responses for list_hashes will just be an ascii list of MD5 separated by spaces
-            elif self.get_action_identifier() == "list_hashes":
-                hashlist_test = self._process_test_hash_list(r, action_result)
-                if hashlist_test[0] == phantom.APP_SUCCESS:
-                    return hashlist_test
 
             # Responses for list_urls will just be an ascii list of URLs separated by spaces
             elif self.get_action_identifier() == "list_urls":
                 if r.text[:4] == "http":
                     return RetVal(phantom.APP_SUCCESS, r.text.split())
+
+            # Responses for list_hashes will just be an ascii list of MD5 separated by spaces
+            if self.get_action_identifier() == "list_hashes":
+                hashlist_test = self._process_test_hash_list(r, action_result)
+                if hashlist_test[0] == phantom.APP_SUCCESS:
+                    return hashlist_test
 
         # Process an HTML resonse, Do this no matter what the api talks.
         # There is a high chance of a PROXY in between phantom and the rest of
@@ -171,7 +171,12 @@ class MalshareConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         self.save_progress("Connecting to endpoint")
-        ret_val, response = self._make_rest_call('getlistraw', action_result)
+
+        if "file_type" in param and param["file_type"]:
+            ret_val, response = self._make_rest_call('type&type=' + param["file_type"], action_result)
+
+        else:
+            ret_val, response = self._make_rest_call('getlistraw', action_result)
 
         if phantom.is_fail(ret_val):
             self.save_progress("Hash List request failed. Error: {0}".format(action_result.get_message()))
@@ -243,34 +248,6 @@ class MalshareConnector(BaseConnector):
 
         self.save_progress("Info found for hash: " + str(param["hash"]))
         return action_result.set_status(phantom.APP_SUCCESS)
-
-    def _handle_get_filetype_hashes(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
-
-        action_result = self.add_action_result(ActionResult(dict(param)))
-
-        self.save_progress("Connecting to endpoint")
-        ret_val, response = self._make_rest_call('type&type=' + param["filetype"], action_result)
-
-        if phantom.is_fail(ret_val):
-            self.save_progress("Filetype Hash List request failed. Error: {0}".format(action_result.get_message()))
-            return action_result.get_status()
-
-        hash_count = 0
-
-        for hash_entry in response:
-            if len(hash_entry) == 32:
-                action_result.add_data({"md5": hash_entry})
-                hash_count += 1
-
-        action_result.update_summary({'hash_count': hash_count})
-
-        if hash_count <= 0:
-            self.save_progress("Unable to extract any hashes from filetype hash list response")
-            return action_result.set_status(phantom.APP_SUCCESS, "No hashes processed from filetype hash list.")
-        else:
-            self.save_progress(str(hash_count) + " hashes found in filetype hash list")
-            return action_result.set_status(phantom.APP_SUCCESS, str(hash_count) + " hashes found in filetype hash list")
 
     def _save_file_to_vault(self, action_result, response_attachment, sample_hash):
 
@@ -356,9 +333,6 @@ class MalshareConnector(BaseConnector):
         elif action_id == 'get_file_info':
             ret_val = self._handle_get_file_info(param)
 
-        elif action_id == 'get_filetype_hashes':
-            ret_val = self._handle_get_filetype_hashes(param)
-
         elif action_id == 'get_file':
             ret_val = self._handle_get_file(param)
 
@@ -381,8 +355,8 @@ class MalshareConnector(BaseConnector):
 
 if __name__ == '__main__':
     import sys
-    # import pudb
-    # pudb.set_trace()
+    import pudb
+    pudb.set_trace()
 
     if len(sys.argv) < 2:
         print "No test json specified as input"
