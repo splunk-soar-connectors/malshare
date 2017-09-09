@@ -1,0 +1,469 @@
+{
+    "appid": "7729b756-27d2-4d46-87e2-443c9aad6813",
+    "name": "MalShare",
+    "description": "This app implements fetching lists and individual samples of malware from MalShare",
+    "type": "information",
+    "product_vendor": "MalShare",
+    "logo": "malshare.png",
+    "product_name": "MalShare",
+    "product_version_regex": ".*",
+    "publisher": "Phantom",
+    "license": "Copyright Phantom 2017",
+    "app_version": "1.0.0",
+    "utctime_updated": "2017-08-29T19:55:58.899601Z",
+    "package_name": "phantom_malshare",
+    "main_module": "malshare_connector.pyc",
+    "min_phantom_version": "3.0.247",
+    "app_wizard_version": "1.0.0",
+    "configuration": {
+        "api_key": {
+            "description": "MalShare API key",
+            "data_type": "string",
+            "required": true,
+            "value_list": [],
+            "default": "",
+            "order": 0
+        }
+    },
+    "actions": [
+        {
+            "action": "test connectivity",
+            "identifier": "test_connectivity",
+            "description": "Validate the asset configuration for connectivity using supplied configuration",
+            "verbose": "",
+            "type": "test",
+            "read_only": true,
+            "parameters": {},
+            "output": [],
+            "versions": "EQ(*)"
+        },
+        {
+            "action": "list hashes",
+            "identifier": "list_hashes",
+            "type": "investigate",
+            "read_only": true,
+            "description": "List MD5 hashes from the past 24 hours",
+            "parameters": {
+                "file_type": {
+                    "description": "The file type to retrieve hashes for",
+                    "data_type": "string",
+                    "required": false,
+                    "allow_list": false
+                }
+            },
+            "versions": "EQ(*)",
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "column_name": "MD5",
+                    "column_order": 0,
+                    "data_path": "action_result.data.*.md5",
+                    "data_type": "string",
+                    "example_values": [
+                        "64584e3e6a53cf2b078f363575826c8b"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Hash count: 485",
+                        "No hashes processed from hash list."
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.hash_count",
+                    "data_type": "numeric",
+                    "example_values": [
+                        485,
+                        0
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.file_type",
+                    "data_type": "string",
+                    "example_values": [
+                        "PE32"
+                    ]
+                }
+            ],
+            "render": {
+                "width": 1,
+                "title": "Get Hash List",
+                "type": "table",
+                "height": 9
+            }
+        },
+        {
+            "action": "list urls",
+            "identifier": "list_urls",
+            "type": "investigate",
+            "read_only": true,
+            "description": "List of sample sources from the past 24 hours",
+            "parameters": {},
+            "versions": "EQ(*)",
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "success"
+                    ]
+                },
+                {
+                    "column_name": "Source",
+                    "column_order": 0,
+                    "data_path": "action_result.data.*.source",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://trelawnyrose.com/immcld.exe"
+                    ],
+                    "contains": [
+                        "url",
+                        "file name"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Source count: 862"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.source_count",
+                    "data_type": "numeric",
+                    "example_values": [
+                        862
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                }
+            ],
+            "render": {
+                "width": 1,
+                "title": "Get Url List",
+                "type": "table",
+                "height": 9
+            }
+        },
+        {
+            "action": "get file info",
+            "identifier": "get_file_info",
+            "description": "Get details (file type, hashes, source) of the stored file",
+            "type": "investigation",
+            "read_only": true,
+            "parameters": {
+                "hash": {
+                    "description": "The hash of the file to be queried",
+                    "data_type": "string",
+                    "contains": [
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ],
+                    "required": true,
+                    "allow_list": false
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "failed",
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Status Code: 200. Data from server:\n{\"MD5\":\"64584e3e6a53cf2b078f363575826c8b\",\"SHA1\":\"e85449f08c53e6bd5742eb8edb4d559692dce617\",\"SHA256\":\"495665943729e5e1b5f20ffb2352188fecea6e6d44f4c45479f74c8a931cbca8\",\"SSDEEP\":\"12288:qbeA0BX1BiOHR2HoTHVaXfpidJCa6Xls:qj07BDHRFTgXw2ls\",\"F_TYPE\":\"PE32\",\"SOURCES\":[\"http:\\/\\/trelawnyrose.com\\/immcld.exe\"]}\n",
+                        "",
+                        "File info found: True"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "example_values": [
+                        "64584e3e6a53cf2b078f363575826c8b",
+                        "637015ee34d7a22de65b9eb24ed75105",
+                        "e35c9d795e7fb1db54465ef46d70efe6",
+                        "91a61e3be9cc7251972f6ee8d4836cb4"
+                    ],
+                    "contains": [
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0,
+                        1
+                    ]
+                },
+                {
+                    "column_name": "SHA1",
+                    "column_order": 1,
+                    "data_path": "action_result.data.*.SHA1",
+                    "data_type": "string",
+                    "example_values": [
+                        "a4a0a781622de17cb20c4982d5e24efd674627d9",
+                        "2c31bbb3a0fcbfc0052ee75f649be4313480b739",
+                        "f78c091a623c605e74511dd80d1a48376c2c4145"
+                    ],
+                    "contains": [
+                        "sha1"
+                    ]
+                },
+                {
+                    "column_name": "Source",
+                    "column_order": 5,
+                    "data_path": "action_result.data.*.SOURCES",
+                    "data_type": "string",
+                    "example_values": [
+                        "http://top-rank.eu/dll.exe",
+                        "http://oyasinsaat.com.tr/86hHYU6",
+                        "http://shiftspace.ro/87wifhFsdf"
+                    ],
+                    "contains": [
+                        "file name",
+                        "url"
+                    ]
+                },
+                {
+                    "column_name": "File type",
+                    "column_order": 4,
+                    "data_path": "action_result.data.*.F_TYPE",
+                    "data_type": "string",
+                    "example_values": [
+                        "PE32"
+                    ]
+                },
+                {
+                    "column_name": "SSDEEP",
+                    "column_order": 3,
+                    "data_path": "action_result.data.*.SSDEEP",
+                    "data_type": "string",
+                    "example_values": [
+                        "768:CnIhn202izqt/rngcsP2u5BFs7PEA+NTIbBdz/7+0g8YaAAaiOIEOf3yb1f:Cni2ezMsums4A+Ns1Fq0a2ywf3c1f",
+                        "6144:z/wRc2KcrO6z6DuINvYRC+bBRkSDWE0veY6g6FjcvDvOh6Iis2fhBLF3a0tH+R:Em2ZrO6zLVS48WY6g6d6IiLflqI",
+                        "6144:DyjTcM92KcrO6z6DuINvYRC+bBRkSDWE0veY6g6FjcvDvOh6Iis2fhBLF3a0tH+y:jo2ZrO6zLVS48WY6g6d6IiLflqI"
+                    ]
+                },
+                {
+                    "column_name": "SHA256",
+                    "column_order": 2,
+                    "data_path": "action_result.data.*.SHA256",
+                    "data_type": "string",
+                    "example_values": [
+                        "dd598071d081d02bde1aadf7fcadd59c78e30a8307b552da8f6cce6c5c39fa78",
+                        "6d5d672d9e8402a4e6a2309c71443e93efccccee8f9959afc24ae9a89fe2935c",
+                        "3d653771933422f9a081ea122865da76edde83cdeb41b8b8e377833e75e21aca"
+                    ],
+                    "contains": [
+                        "sha256"
+                    ]
+                },
+                {
+                    "column_name": "MD5",
+                    "column_order": 0,
+                    "data_path": "action_result.data.*.MD5",
+                    "data_type": "string",
+                    "example_values": [
+                        "637015ee34d7a22de65b9eb24ed75105",
+                        "e35c9d795e7fb1db54465ef46d70efe6",
+                        "91a61e3be9cc7251972f6ee8d4836cb4"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.file_info_found",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                }
+            ],
+            "versions": "EQ(*)",
+            "render": {
+                "width": 6,
+                "title": "File Information",
+                "type": "table",
+                "height": 10
+            }
+        },
+        {
+            "action": "get file",
+            "identifier": "get_file",
+            "description": "Get file matching supplied hash",
+            "type": "investigation",
+            "read_only": true,
+            "parameters": {
+                "hash": {
+                    "description": "The hash of the file to be queried",
+                    "data_type": "string",
+                    "contains": [
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ],
+                    "required": true,
+                    "allow_list": false
+                }
+            },
+            "output": [
+                {
+                    "data_path": "action_result.status",
+                    "data_type": "string",
+                    "example_values": [
+                        "failed",
+                        "success"
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Vault id: 51fbcaba1f6832dae1d3b8060a874e71c52e93c8\nName: ec091d840d8e6e179804cf5a2ea81e58\nFile found: True"
+                    ]
+                },
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "example_values": [
+                        "64584e3e6a53cf2b078f363575826c8b",
+                        "c1736b814389cb6602329186c8181b35",
+                        "ec091d840d8e6e179804cf5a2ea81e58"
+                    ],
+                    "contains": [
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        2,
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0,
+                        1
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.vault_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "db0680862044d6c60a410388c93955c2c757002f",
+                        "51fbcaba1f6832dae1d3b8060a874e71c52e93c8"
+                    ],
+                    "contains": [
+                        "sha1",
+                        "vault id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "c1736b814389cb6602329186c8181b35",
+                        "ec091d840d8e6e179804cf5a2ea81e58"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.vault_id",
+                    "data_type": "string",
+                    "example_values": [
+                        "db0680862044d6c60a410388c93955c2c757002f",
+                        "51fbcaba1f6832dae1d3b8060a874e71c52e93c8"
+                    ],
+                    "contains": [
+                        "sha1",
+                        "vault id"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.name",
+                    "data_type": "string",
+                    "example_values": [
+                        "c1736b814389cb6602329186c8181b35",
+                        "ec091d840d8e6e179804cf5a2ea81e58"
+                    ],
+                    "contains": [
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.file_found",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                }
+            ],
+            "versions": "EQ(*)"
+        }
+    ]
+}
