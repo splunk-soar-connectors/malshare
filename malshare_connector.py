@@ -112,7 +112,7 @@ class MalshareConnector(BaseConnector):
                     return RetVal(phantom.APP_SUCCESS, r.text.split())
 
             # Responses for list_hashes will just be an ascii list of MD5 separated by spaces
-            if self.get_action_identifier() == "list_hashes":
+            if self.get_action_identifier() == "list_hashes" or self.get_action_identifier() == "test_connectivity":
                 hashlist_test = self._process_test_hash_list(r, action_result)
                 if hashlist_test[0] == phantom.APP_SUCCESS:
                     return hashlist_test

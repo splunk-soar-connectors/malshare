@@ -186,7 +186,7 @@
             "action": "get file info",
             "identifier": "get_file_info",
             "description": "Get details (file type, hashes, source) of the stored file",
-            "type": "investigation",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "hash": {
@@ -347,7 +347,7 @@
             "action": "get file",
             "identifier": "get_file",
             "description": "Get file matching supplied hash",
-            "type": "investigation",
+            "type": "investigate",
             "read_only": true,
             "parameters": {
                 "hash": {
