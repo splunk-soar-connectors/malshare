@@ -1,19 +1,19 @@
 {
     "appid": "7729b756-27d2-4d46-87e2-443c9aad6813",
     "name": "MalShare",
-    "description": "This app implements fetching lists and individual samples of malware from MalShare",
+    "description": "This app integrates with MalShare to provide several investigative actions",
     "type": "information",
     "product_vendor": "MalShare",
     "logo": "malshare.png",
     "product_name": "MalShare",
     "product_version_regex": ".*",
     "publisher": "Phantom",
-    "license": "Copyright Phantom 2017",
+    "license": "Copyright (c) Phantom Cyber Corporation 2017",
     "app_version": "1.0.2",
     "utctime_updated": "2017-10-04T20:54:15.000000Z",
     "package_name": "phantom_malshare",
     "main_module": "malshare_connector.pyc",
-    "min_phantom_version": "3.0.247",
+    "min_phantom_version": "3.0.251",
     "app_wizard_version": "1.0.0",
     "configuration": {
         "api_key": {
@@ -42,7 +42,7 @@
             "identifier": "list_hashes",
             "type": "investigate",
             "read_only": true,
-            "description": "List MD5 hashes from the past 24 hours",
+            "description": "List the MD5 hashes from the past 24 hours",
             "parameters": {
                 "file_type": {
                     "description": "The file type to retrieve hashes for",
@@ -122,7 +122,7 @@
             "identifier": "list_urls",
             "type": "investigate",
             "read_only": true,
-            "description": "List of sample sources from the past 24 hours",
+            "description": "List the sample sources from the past 24 hours",
             "parameters": {},
             "versions": "EQ(*)",
             "output": [
@@ -185,7 +185,7 @@
         {
             "action": "get file info",
             "identifier": "get_file_info",
-            "description": "Get details (file type, hashes, source) of the stored file",
+            "description": "Get the file details associated with a hash",
             "type": "investigate",
             "read_only": true,
             "parameters": {
@@ -346,7 +346,7 @@
         {
             "action": "get file",
             "identifier": "get_file",
-            "description": "Get file matching supplied hash",
+            "description": "Get the file associated with a hash",
             "type": "investigate",
             "read_only": true,
             "parameters": {
