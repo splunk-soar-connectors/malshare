@@ -144,7 +144,7 @@ class MalshareConnector(BaseConnector):
 
         # Malshare does not have a valid SSL certificate but still better than nothing
         try:
-            r = request_func(self._api_url + get_string, verify=config.get('verify_server_cert', False))
+            r = request_func(self._api_url + get_string)
 
         except Exception as e:
             return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(str(e))), resp_json)
