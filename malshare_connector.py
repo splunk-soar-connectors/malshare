@@ -136,8 +136,6 @@ class MalshareConnector(BaseConnector):
 
     def _make_rest_call(self, get_string, action_result):
 
-        config = self.get_config()
-
         resp_json = None
 
         request_func = getattr(requests, "get")
@@ -159,7 +157,7 @@ class MalshareConnector(BaseConnector):
         ret_val, response = self._make_rest_call('getlistraw', action_result)
 
         if phantom.is_fail(ret_val):
-            self.save_progress("Test Connectivity Failed. Error: {0}".format(action_result.get_message()))
+            self.save_progress("Test Connectivity Failed")
             return action_result.get_status()
 
         self.save_progress("Test Connectivity Passed")
