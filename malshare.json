@@ -18,7 +18,7 @@
     "configuration": {
         "api_key": {
             "description": "MalShare API key",
-            "data_type": "string",
+            "data_type": "password",
             "required": true,
             "value_list": [],
             "default": "",
