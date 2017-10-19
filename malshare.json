@@ -214,8 +214,6 @@
                     "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "Status Code: 200. Data from server:\n{\"MD5\":\"64584e3e6a53cf2b078f363575826c8b\",\"SHA1\":\"e85449f08c53e6bd5742eb8edb4d559692dce617\",\"SHA256\":\"495665943729e5e1b5f20ffb2352188fecea6e6d44f4c45479f74c8a931cbca8\",\"SSDEEP\":\"12288:qbeA0BX1BiOHR2HoTHVaXfpidJCa6Xls:qj07BDHRFTgXw2ls\",\"F_TYPE\":\"PE32\",\"SOURCES\":[\"http:\\/\\/trelawnyrose.com\\/immcld.exe\"]}\n",
-                        "",
                         "File info found: True"
                     ]
                 },
