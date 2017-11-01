@@ -20,8 +20,6 @@
             "description": "MalShare API key",
             "data_type": "password",
             "required": true,
-            "value_list": [],
-            "default": "",
             "order": 0
         }
     },
