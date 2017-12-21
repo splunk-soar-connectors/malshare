@@ -4,7 +4,8 @@
     "description": "This app integrates with MalShare to provide several investigative actions",
     "type": "information",
     "product_vendor": "MalShare",
-    "logo": "malshare.png",
+    "logo": "logo_malshare.svg",
+    "logo_dark": "logo_malshare_dark.svg",
     "product_name": "MalShare",
     "product_version_regex": ".*",
     "publisher": "Phantom",
@@ -59,6 +60,13 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.parameter.file_type",
+                    "data_type": "string",
+                    "example_values": [
+                        "PE32"
+                    ]
+                },
+                {
                     "column_name": "MD5",
                     "column_order": 0,
                     "data_path": "action_result.data.*.md5",
@@ -71,19 +79,19 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Hash count: 485",
-                        "No hashes processed from hash list."
-                    ]
-                },
-                {
                     "data_path": "action_result.summary.hash_count",
                     "data_type": "numeric",
                     "example_values": [
                         485,
                         0
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Hash count: 485",
+                        "No hashes processed from hash list."
                     ]
                 },
                 {
@@ -98,13 +106,6 @@
                     "data_type": "numeric",
                     "example_values": [
                         1
-                    ]
-                },
-                {
-                    "data_path": "action_result.parameter.file_type",
-                    "data_type": "string",
-                    "example_values": [
-                        "PE32"
                     ]
                 }
             ],
@@ -145,17 +146,17 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Source count: 862"
-                    ]
-                },
-                {
                     "data_path": "action_result.summary.source_count",
                     "data_type": "numeric",
                     "example_values": [
                         862
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "Source count: 862"
                     ]
                 },
                 {
@@ -209,13 +210,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "File info found: True"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.hash",
                     "data_type": "string",
                     "example_values": [
@@ -231,18 +225,26 @@
                     ]
                 },
                 {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
+                    "column_name": "File type",
+                    "column_order": 4,
+                    "data_path": "action_result.data.*.F_TYPE",
+                    "data_type": "string",
                     "example_values": [
-                        1
+                        "PE32"
                     ]
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
+                    "column_name": "MD5",
+                    "column_order": 0,
+                    "data_path": "action_result.data.*.MD5",
+                    "data_type": "string",
                     "example_values": [
-                        0,
-                        1
+                        "637015ee34d7a22de65b9eb24ed75105",
+                        "e35c9d795e7fb1db54465ef46d70efe6",
+                        "91a61e3be9cc7251972f6ee8d4836cb4"
+                    ],
+                    "contains": [
+                        "md5"
                     ]
                 },
                 {
@@ -257,6 +259,20 @@
                     ],
                     "contains": [
                         "sha1"
+                    ]
+                },
+                {
+                    "column_name": "SHA256",
+                    "column_order": 2,
+                    "data_path": "action_result.data.*.SHA256",
+                    "data_type": "string",
+                    "example_values": [
+                        "dd598071d081d02bde1aadf7fcadd59c78e30a8307b552da8f6cce6c5c39fa78",
+                        "6d5d672d9e8402a4e6a2309c71443e93efccccee8f9959afc24ae9a89fe2935c",
+                        "3d653771933422f9a081ea122865da76edde83cdeb41b8b8e377833e75e21aca"
+                    ],
+                    "contains": [
+                        "sha256"
                     ]
                 },
                 {
@@ -275,15 +291,6 @@
                     ]
                 },
                 {
-                    "column_name": "File type",
-                    "column_order": 4,
-                    "data_path": "action_result.data.*.F_TYPE",
-                    "data_type": "string",
-                    "example_values": [
-                        "PE32"
-                    ]
-                },
-                {
                     "column_name": "SSDEEP",
                     "column_order": 3,
                     "data_path": "action_result.data.*.SSDEEP",
@@ -295,39 +302,33 @@
                     ]
                 },
                 {
-                    "column_name": "SHA256",
-                    "column_order": 2,
-                    "data_path": "action_result.data.*.SHA256",
-                    "data_type": "string",
-                    "example_values": [
-                        "dd598071d081d02bde1aadf7fcadd59c78e30a8307b552da8f6cce6c5c39fa78",
-                        "6d5d672d9e8402a4e6a2309c71443e93efccccee8f9959afc24ae9a89fe2935c",
-                        "3d653771933422f9a081ea122865da76edde83cdeb41b8b8e377833e75e21aca"
-                    ],
-                    "contains": [
-                        "sha256"
-                    ]
-                },
-                {
-                    "column_name": "MD5",
-                    "column_order": 0,
-                    "data_path": "action_result.data.*.MD5",
-                    "data_type": "string",
-                    "example_values": [
-                        "637015ee34d7a22de65b9eb24ed75105",
-                        "e35c9d795e7fb1db54465ef46d70efe6",
-                        "91a61e3be9cc7251972f6ee8d4836cb4"
-                    ],
-                    "contains": [
-                        "md5"
-                    ]
-                },
-                {
                     "data_path": "action_result.summary.file_info_found",
                     "data_type": "boolean",
                     "example_values": [
                         true,
                         false
+                    ]
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string",
+                    "example_values": [
+                        "File info found: True"
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
+                    "example_values": [
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0,
+                        1
                     ]
                 }
             ],
@@ -368,13 +369,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.message",
-                    "data_type": "string",
-                    "example_values": [
-                        "Vault id: 51fbcaba1f6832dae1d3b8060a874e71c52e93c8\nName: ec091d840d8e6e179804cf5a2ea81e58\nFile found: True"
-                    ]
-                },
-                {
                     "data_path": "action_result.parameter.hash",
                     "data_type": "string",
                     "example_values": [
@@ -391,19 +385,14 @@
                     "column_name": "Hash"
                 },
                 {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric",
+                    "data_path": "action_result.data.*.name",
+                    "data_type": "string",
                     "example_values": [
-                        2,
-                        1
-                    ]
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric",
-                    "example_values": [
-                        0,
-                        1
+                        "c1736b814389cb6602329186c8181b35",
+                        "ec091d840d8e6e179804cf5a2ea81e58"
+                    ],
+                    "contains": [
+                        "md5"
                     ]
                 },
                 {
@@ -421,7 +410,15 @@
                     "column_name": "Vault ID"
                 },
                 {
-                    "data_path": "action_result.data.*.name",
+                    "data_path": "action_result.summary.file_found",
+                    "data_type": "boolean",
+                    "example_values": [
+                        true,
+                        false
+                    ]
+                },
+                {
+                    "data_path": "action_result.summary.name",
                     "data_type": "string",
                     "example_values": [
                         "c1736b814389cb6602329186c8181b35",
@@ -444,22 +441,26 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.summary.name",
+                    "data_path": "action_result.message",
                     "data_type": "string",
                     "example_values": [
-                        "c1736b814389cb6602329186c8181b35",
-                        "ec091d840d8e6e179804cf5a2ea81e58"
-                    ],
-                    "contains": [
-                        "md5"
+                        "Vault id: 51fbcaba1f6832dae1d3b8060a874e71c52e93c8\nName: ec091d840d8e6e179804cf5a2ea81e58\nFile found: True"
                     ]
                 },
                 {
-                    "data_path": "action_result.summary.file_found",
-                    "data_type": "boolean",
+                    "data_path": "summary.total_objects",
+                    "data_type": "numeric",
                     "example_values": [
-                        true,
-                        false
+                        2,
+                        1
+                    ]
+                },
+                {
+                    "data_path": "summary.total_objects_successful",
+                    "data_type": "numeric",
+                    "example_values": [
+                        0,
+                        1
                     ]
                 }
             ],
