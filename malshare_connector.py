@@ -1,14 +1,10 @@
 # --
 # File: malshare_connector.py
 #
-# Copyright (c) Phantom Cyber Corporation, 2017
-#
-# This unpublished material is proprietary to Phantom Cyber.
-# All rights reserved. The methods and
-# techniques described herein are considered trade secrets
-# and/or confidential. Reproduction or distribution, in whole
-# or in part, is forbidden except by express written permission
-# of Phantom Cyber Corporation.
+# Copyright (c) 2017-2019 Splunk Inc.
+
+# SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+# without a valid written license from Splunk Inc. is PROHIBITED.
 #
 # --
 
@@ -251,13 +247,19 @@ class MalshareConnector(BaseConnector):
 
         # Create a tmp directory on the vault partition
         guid = uuid.uuid4()
-        local_dir = '/vault/tmp/{}'.format(guid)
+
+        if hasattr(Vault, 'get_vault_tmp_dir'):
+            temp_dir = Vault.get_vault_tmp_dir()
+        else:
+            temp_dir = '/vault/tmp'
+
+        local_dir = temp_dir + '/{}'.format(guid)
         self.save_progress("Using temp directory: {0}".format(guid))
 
         try:
             os.makedirs(local_dir)
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Unable to create temporary folder '/vault/tmp'.", e)
+            return action_result.set_status(phantom.APP_ERROR, "Unable to create temporary folder {0}.".format(temp_dir), e)
 
         file_path = "{0}/{1}".format(local_dir, sample_hash)
 
