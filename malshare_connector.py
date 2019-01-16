@@ -37,7 +37,7 @@ class MalshareConnector(BaseConnector):
         self._state = None
         self._api_key = None
 
-        self._base_url = "https://www.malshare.com/api.php?"
+        self._base_url = "https://malshare.com/api.php?"
 
     def _process_empty_reponse(self, response, action_result):
 
