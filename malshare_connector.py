@@ -70,8 +70,7 @@ class MalshareConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code,
-                error_text)
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
 
         message = message.replace('{', '{{').replace('}', '}}')
 
@@ -103,7 +102,7 @@ class MalshareConnector(BaseConnector):
 
             # Responses for list_urls will just be an ascii list of URLs separated by spaces
             elif self.get_action_identifier() == "list_urls":
-                if r.text[:4] == "http":
+                if "http" in r.text[:5].strip():
                     return RetVal(phantom.APP_SUCCESS, r.text.split())
 
             # Responses for list_hashes will just be an ascii list of MD5 separated by spaces
