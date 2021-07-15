@@ -1,7 +1,7 @@
 # --
 # File: malshare_connector.py
 #
-# Copyright (c) 2017-2019 Splunk Inc.
+# Copyright (c) 2017-2021 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -271,7 +271,7 @@ class MalshareConnector(BaseConnector):
         vault_ret_dict = Vault.add_attachment(file_path, self.get_container_id(), file_name=file_name)
         curr_data = {}
 
-        if (vault_ret_dict['succeeded']):
+        if vault_ret_dict['succeeded']:
             curr_data[phantom.APP_JSON_VAULT_ID] = vault_ret_dict[phantom.APP_JSON_HASH]
             curr_data[phantom.APP_JSON_NAME] = file_name
             action_result.add_data(curr_data)
@@ -357,7 +357,7 @@ if __name__ == '__main__':
     pudb.set_trace()
 
     if len(sys.argv) < 2:
-        print "No test json specified as input"
+        print("No test json specified as input")
         exit(0)
 
     with open(sys.argv[1]) as f:
@@ -368,6 +368,6 @@ if __name__ == '__main__':
         connector = MalshareConnector()
         connector.print_progress_message = True
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
