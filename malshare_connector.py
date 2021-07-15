@@ -63,6 +63,9 @@ class MalshareConnector(BaseConnector):
 
         try:
             soup = BeautifulSoup(response.text, "html.parser")
+             # Remove the script, style, footer and navigation part from the HTML message
+            for element in soup(["script", "style", "footer", "nav"]):
+                element.extract()
             error_text = soup.text
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
@@ -70,7 +73,7 @@ class MalshareConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
 
         message = message.replace('{', '{{').replace('}', '}}')
 
@@ -268,7 +271,7 @@ class MalshareConnector(BaseConnector):
         file_name = '{}'.format(sample_hash)
 
         # move the file to the vault
-        vault_ret_dict = Vault.add_attachment(file_path, self.get_container_id(), file_name=file_name)
+        vault_ret_dict = vault.vault_add(file_path, self.get_container_id(), file_name=file_name)
         curr_data = {}
 
         if vault_ret_dict['succeeded']:
@@ -306,7 +309,11 @@ class MalshareConnector(BaseConnector):
             action_result.add_data({param["hash"]: False})
             return action_result.set_status(phantom.APP_SUCCESS, "Sample not found by hash")
 
-        self._save_file_to_vault(action_result, response, param["hash"])
+        ret_val = self._save_file_to_vault(action_result, response, param["hash"])
+
+        if phantom.is_fail(ret_val):
+            self.save_progress("Save file to vault failed. Error: {0}".format(action_result.get_message()))
+            return action_result.get_status()
 
         action_result.update_summary({'file_found': True})
         self.save_progress("Sample retrieved for hash: " + str(param["hash"]))

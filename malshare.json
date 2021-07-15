@@ -49,7 +49,7 @@
                 "file_type": {
                     "description": "The file type to retrieve hashes for",
                     "data_type": "string",
-                    "allow_list": false
+                    "order": 0
                 }
             },
             "versions": "EQ(*)",
@@ -222,8 +222,8 @@
                         "md5"
                     ],
                     "required": true,
-                    "allow_list": false,
-                    "primary": true
+                    "primary": true,
+                    "order": 0
                 }
             },
             "output": [
@@ -382,8 +382,8 @@
                         "md5"
                     ],
                     "required": true,
-                    "allow_list": false,
-                    "primary": true
+                    "primary": true,
+                    "order": 0
                 }
             },
             "output": [
