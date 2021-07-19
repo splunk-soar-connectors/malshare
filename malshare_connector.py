@@ -271,7 +271,7 @@ class MalshareConnector(BaseConnector):
         file_name = '{}'.format(sample_hash)
 
         # move the file to the vault
-        success, message, vault_id = vault.vault_add(file_path, self.get_container_id(), file_name=file_name)
+        success, message, vault_id = vault.vault_add(file_location=file_path, container=self.get_container_id(), file_name=file_name)
         curr_data = {}
 
         if success:
