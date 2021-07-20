@@ -12,7 +12,7 @@
 import phantom.app as phantom
 from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
-import phantom.rules as phantom
+import phantom.rules as ph_rules
 
 import requests
 import json
@@ -249,8 +249,8 @@ class MalshareConnector(BaseConnector):
         # Create a tmp directory on the vault partition
         guid = uuid.uuid4()
 
-        if hasattr(phantom.Vault, 'get_vault_tmp_dir'):
-            temp_dir = phantom.Vault.get_vault_tmp_dir()
+        if hasattr(ph_rules.Vault, 'get_vault_tmp_dir'):
+            temp_dir = ph_rules.Vault.get_vault_tmp_dir()
         else:
             temp_dir = '/vault/tmp'
 
@@ -271,7 +271,7 @@ class MalshareConnector(BaseConnector):
         file_name = '{}'.format(sample_hash)
 
         # move the file to the vault
-        success, message, vault_id = phantom.vault_add(file_location=file_path, container=self.get_container_id(), file_name=file_name)
+        success, message, vault_id = ph_rules.vault_add(file_location=file_path, container=self.get_container_id(), file_name=file_name)
         curr_data = {}
 
         if success:
