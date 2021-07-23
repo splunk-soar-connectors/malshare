@@ -8,13 +8,17 @@
     "logo_dark": "logo_malshare_dark.svg",
     "product_name": "MalShare",
     "product_version_regex": ".*",
-    "publisher": "Phantom",
-    "license": "Copyright (c) 2017-2019 Splunk Inc.",
-    "app_version": "1.0.15",
-    "utctime_updated": "2019-01-18T22:35:58.000000Z",
+    "publisher": "Splunk",
+    "license": "Copyright (c) 2017-2021 Splunk Inc.",
+    "app_version": "2.0.3",
+    "utctime_updated": "2021-07-20T23:09:22.000000Z",
     "package_name": "phantom_malshare",
-    "main_module": "malshare_connector.pyc",
-    "min_phantom_version": "4.0.1068",
+    "main_module": "malshare_connector.py",
+    "min_phantom_version": "4.9.39220",
+    "python_version": "3",
+    "latest_tested_versions": [
+        "Cloud, tested on 15th July, 2021"
+    ],
     "app_wizard_version": "1.0.0",
     "configuration": {
         "api_key": {
@@ -29,7 +33,6 @@
             "action": "test connectivity",
             "identifier": "test_connectivity",
             "description": "Validate the asset configuration for connectivity using supplied configuration",
-            "verbose": "",
             "type": "test",
             "read_only": true,
             "parameters": {},
@@ -46,8 +49,7 @@
                 "file_type": {
                     "description": "The file type to retrieve hashes for",
                     "data_type": "string",
-                    "required": false,
-                    "allow_list": false
+                    "order": 0
                 }
             },
             "versions": "EQ(*)",
@@ -56,7 +58,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -107,6 +110,27 @@
                     "example_values": [
                         "PE32"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.md5.md5",
+                    "data_type": "string",
+                    "example_values": [
+                        "8b61ca6d1254da43b8643d478acf485f"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.md5.sha1",
+                    "data_type": "string",
+                    "example_values": [
+                        "7d6f0f1f281bbc1446fcb8f42213c0d542557375"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.md5.sha256",
+                    "data_type": "string",
+                    "example_values": [
+                        "bdf3eac218cda881ec145d4b3c650fc26b5fe434dcefc971686819f85447f334"
+                    ]
                 }
             ],
             "render": {
@@ -129,7 +153,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -197,7 +222,8 @@
                         "md5"
                     ],
                     "required": true,
-                    "allow_list": false
+                    "primary": true,
+                    "order": 0
                 }
             },
             "output": [
@@ -205,8 +231,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "failed",
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {
@@ -276,7 +302,7 @@
                     ]
                 },
                 {
-                    "column_name": "File type",
+                    "column_name": "File Type",
                     "column_order": 4,
                     "data_path": "action_result.data.*.F_TYPE",
                     "data_type": "string",
@@ -356,7 +382,8 @@
                         "md5"
                     ],
                     "required": true,
-                    "allow_list": false
+                    "primary": true,
+                    "order": 0
                 }
             },
             "output": [
@@ -364,8 +391,8 @@
                     "data_path": "action_result.status",
                     "data_type": "string",
                     "example_values": [
-                        "failed",
-                        "success"
+                        "success",
+                        "failed"
                     ]
                 },
                 {

@@ -1,7 +1,7 @@
 # --
 # File: malshare_connector.py
 #
-# Copyright (c) 2017-2019 Splunk Inc.
+# Copyright (c) 2017-2021 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -12,7 +12,7 @@
 import phantom.app as phantom
 from phantom.base_connector import BaseConnector
 from phantom.action_result import ActionResult
-from phantom.vault import Vault
+import phantom.rules as ph_rules
 
 import requests
 import json
@@ -63,6 +63,9 @@ class MalshareConnector(BaseConnector):
 
         try:
             soup = BeautifulSoup(response.text, "html.parser")
+             # Remove the script, style, footer and navigation part from the HTML message
+            for element in soup(["script", "style", "footer", "nav"]):
+                element.extract()
             error_text = soup.text
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
@@ -70,7 +73,7 @@ class MalshareConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text.encode('utf-8'))
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
 
         message = message.replace('{', '{{').replace('}', '}}')
 
@@ -246,8 +249,8 @@ class MalshareConnector(BaseConnector):
         # Create a tmp directory on the vault partition
         guid = uuid.uuid4()
 
-        if hasattr(Vault, 'get_vault_tmp_dir'):
-            temp_dir = Vault.get_vault_tmp_dir()
+        if hasattr(ph_rules.Vault, 'get_vault_tmp_dir'):
+            temp_dir = ph_rules.Vault.get_vault_tmp_dir()
         else:
             temp_dir = '/vault/tmp'
 
@@ -268,11 +271,11 @@ class MalshareConnector(BaseConnector):
         file_name = '{}'.format(sample_hash)
 
         # move the file to the vault
-        vault_ret_dict = Vault.add_attachment(file_path, self.get_container_id(), file_name=file_name)
+        success, message, vault_id = ph_rules.vault_add(file_location=file_path, container=self.get_container_id(), file_name=file_name)
         curr_data = {}
 
-        if (vault_ret_dict['succeeded']):
-            curr_data[phantom.APP_JSON_VAULT_ID] = vault_ret_dict[phantom.APP_JSON_HASH]
+        if success:
+            curr_data[phantom.APP_JSON_VAULT_ID] = vault_id
             curr_data[phantom.APP_JSON_NAME] = file_name
             action_result.add_data(curr_data)
             wanted_keys = [phantom.APP_JSON_VAULT_ID, phantom.APP_JSON_NAME]
@@ -281,7 +284,7 @@ class MalshareConnector(BaseConnector):
             action_result.set_status(phantom.APP_SUCCESS)
         else:
             action_result.set_status(phantom.APP_ERROR, phantom.APP_ERR_FILE_ADD_TO_VAULT)
-            action_result.append_to_message(vault_ret_dict['message'])
+            action_result.append_to_message(message)
 
         # remove the /tmp/<> temporary directory
         shutil.rmtree(local_dir)
@@ -306,7 +309,11 @@ class MalshareConnector(BaseConnector):
             action_result.add_data({param["hash"]: False})
             return action_result.set_status(phantom.APP_SUCCESS, "Sample not found by hash")
 
-        self._save_file_to_vault(action_result, response, param["hash"])
+        ret_val = self._save_file_to_vault(action_result, response, param["hash"])
+
+        if phantom.is_fail(ret_val):
+            self.save_progress("Error occurred while saving the file to vault failed. Error: {0}".format(action_result.get_message()))
+            return action_result.get_status()
 
         action_result.update_summary({'file_found': True})
         self.save_progress("Sample retrieved for hash: " + str(param["hash"]))
@@ -357,7 +364,7 @@ if __name__ == '__main__':
     pudb.set_trace()
 
     if len(sys.argv) < 2:
-        print "No test json specified as input"
+        print("No test json specified as input")
         exit(0)
 
     with open(sys.argv[1]) as f:
@@ -368,6 +375,6 @@ if __name__ == '__main__':
         connector = MalshareConnector()
         connector.print_progress_message = True
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)
