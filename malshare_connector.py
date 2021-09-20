@@ -38,7 +38,7 @@ class MalshareConnector(BaseConnector):
 
         self._base_url = "https://malshare.com/api.php?"
 
-    def _process_empty_reponse(self, response, action_result):
+    def _process_empty_response(self, response, action_result):
 
         if response.status_code == 200:
             return RetVal(phantom.APP_SUCCESS, {})
@@ -63,7 +63,7 @@ class MalshareConnector(BaseConnector):
 
         try:
             soup = BeautifulSoup(response.text, "html.parser")
-             # Remove the script, style, footer and navigation part from the HTML message
+            # Remove the script, style, footer and navigation part from the HTML message
             for element in soup(["script", "style", "footer", "nav"]):
                 element.extract()
             error_text = soup.text
@@ -105,6 +105,8 @@ class MalshareConnector(BaseConnector):
 
             # Responses for list_urls will just be an ascii list of URLs separated by spaces
             elif self.get_action_identifier() == "list_urls":
+                if not r.text:
+                    return RetVal(phantom.APP_SUCCESS, [])
                 if "http" in r.text[:5].strip():
                     return RetVal(phantom.APP_SUCCESS, r.text.split())
 
@@ -114,7 +116,7 @@ class MalshareConnector(BaseConnector):
                 if hashlist_test[0] == phantom.APP_SUCCESS:
                     return hashlist_test
 
-        # Process an HTML resonse, Do this no matter what the api talks.
+        # Process an HTML response, Do this no matter what the api talks.
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
@@ -123,7 +125,7 @@ class MalshareConnector(BaseConnector):
 
         # it's not content-type that is to be parsed, handle an empty response
         if not r.text:
-            return self._process_empty_reponse(r, action_result)
+            return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
@@ -187,7 +189,7 @@ class MalshareConnector(BaseConnector):
 
         if hash_count <= 0:
             self.save_progress("Unable to extract any hashes from the hash list response")
-            return action_result.set_status(phantom.APP_SUCCESS, "No hashes processed from hash list.")
+            return action_result.set_status(phantom.APP_SUCCESS, "No hashes processed from hash list")
         else:
             self.save_progress(str(hash_count) + " hashes found in hash list")
             return action_result.set_status(phantom.APP_SUCCESS)
@@ -213,9 +215,9 @@ class MalshareConnector(BaseConnector):
 
         action_result.update_summary({'source_count': source_count})
 
-        if source_count <= 0:
+        if source_count == 0:
             self.save_progress("Unable to extract any sources from the source list")
-            return action_result.set_status(phantom.APP_ERROR, "No sources processed from the source list.")
+            return action_result.set_status(phantom.APP_SUCCESS, "No sources processed from the source list")
         else:
             self.save_progress(str(source_count) + " sources found in the source list")
             return action_result.set_status(phantom.APP_SUCCESS)
@@ -260,7 +262,7 @@ class MalshareConnector(BaseConnector):
         try:
             os.makedirs(local_dir)
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Unable to create temporary folder {0}.".format(temp_dir), e)
+            return action_result.set_status(phantom.APP_ERROR, "Unable to create temporary folder {0}".format(temp_dir), e)
 
         file_path = "{0}/{1}".format(local_dir, sample_hash)
 
