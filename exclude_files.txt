@@ -3,3 +3,5 @@ Makefile
 .git*
 .gitlab-ci.yml
 whitesource-results
+whitesource*
+gl-*.csv
