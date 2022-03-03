@@ -15,17 +15,17 @@
 #
 #
 # Phantom App imports
-import phantom.app as phantom
-from phantom.base_connector import BaseConnector
-from phantom.action_result import ActionResult
-import phantom.rules as ph_rules
-
-import requests
 import json
-import uuid
 import os
 import shutil
+import uuid
+
+import phantom.app as phantom
+import phantom.rules as ph_rules
+import requests
 from bs4 import BeautifulSoup
+from phantom.action_result import ActionResult
+from phantom.base_connector import BaseConnector
 
 
 class RetVal(tuple):
@@ -368,6 +368,7 @@ class MalshareConnector(BaseConnector):
 
 if __name__ == '__main__':
     import sys
+
     import pudb
     pudb.set_trace()
 
