@@ -9,7 +9,7 @@
     "product_name": "MalShare",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2017-2022 Splunk Inc.",
+    "license": "Copyright (c) 2017-2023 Splunk Inc.",
     "app_version": "2.1.8",
     "utctime_updated": "2022-03-03T23:24:13.000000Z",
     "package_name": "phantom_malshare",
