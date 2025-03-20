@@ -1,6 +1,6 @@
 # File: malshare_connector.py
 #
-# Copyright (c) 2017-2024 Splunk Inc.
+# Copyright (c) 2017-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -34,10 +34,8 @@ class RetVal(tuple):
 
 
 class MalshareConnector(BaseConnector):
-
     def __init__(self):
-
-        super(MalshareConnector, self).__init__()
+        super().__init__()
 
         self._state = None
         self._api_key = None
@@ -45,14 +43,12 @@ class MalshareConnector(BaseConnector):
         self._base_url = "https://malshare.com/api.php?"
 
     def _process_empty_response(self, response, action_result):
-
         if response.status_code == 200:
             return RetVal(phantom.APP_SUCCESS, {})
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
 
     def _process_test_hash_list(self, r, action_result):
-
         split_response = r.text.split()
 
         # If the first item in the split is 32 characters and we're expecting a hash, proceed
@@ -63,7 +59,6 @@ class MalshareConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Did not receive expected hash list: " + r.text), None)
 
     def _process_html_response(self, response, action_result):
-
         # An html response, treat it like an error
         status_code = response.status_code
 
@@ -73,31 +68,29 @@ class MalshareConnector(BaseConnector):
             for element in soup(["script", "style", "footer", "nav"]):
                 element.extract()
             error_text = soup.text
-            split_lines = error_text.split('\n')
+            split_lines = error_text.split("\n")
             split_lines = [x.strip() for x in split_lines if x.strip()]
-            error_text = '\n'.join(split_lines)
+            error_text = "\n".join(split_lines)
         except:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code, error_text)
+        message = f"Status Code: {status_code}. Data from server:\n{error_text}\n"
 
-        message = message.replace('{', '{{').replace('}', '}}')
+        message = message.replace("{", "{{").replace("}", "}}")
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _process_response(self, r, action_result):
-
         # store the r_text in debug data, it will get dumped in the logs if the action fails
-        if hasattr(action_result, 'add_debug_data'):
-            action_result.add_debug_data({'r_status_code': r.status_code})
-            action_result.add_debug_data({'r_text': r.text})
-            action_result.add_debug_data({'r_headers': r.headers})
+        if hasattr(action_result, "add_debug_data"):
+            action_result.add_debug_data({"r_status_code": r.status_code})
+            action_result.add_debug_data({"r_text": r.text})
+            action_result.add_debug_data({"r_headers": r.headers})
 
         if r.status_code == 200:
-
             # get_file_info and get_file can return this message in a 200 if a hash isn't found
             if self.get_action_identifier() == "get_file_info" or self.get_action_identifier() == "get_file":
-                if 'sample not found by hash' in r.text.lower():
+                if "sample not found by hash" in r.text.lower():
                     return RetVal(phantom.APP_SUCCESS, None)
 
             # When downloading samples we need to accept basically anything
@@ -126,7 +119,7 @@ class MalshareConnector(BaseConnector):
         # There is a high chance of a PROXY in between phantom and the rest of
         # world, in case of errors, PROXY's return HTML, this function parses
         # the error and adds it to the action_result.
-        if 'html' in r.headers.get('Content-Type', ''):
+        if "html" in r.headers.get("Content-Type", ""):
             return self._process_html_response(r, action_result)
 
         # it's not content-type that is to be parsed, handle an empty response
@@ -134,13 +127,13 @@ class MalshareConnector(BaseConnector):
             return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
-        message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
-                r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
+        message = "Can't process response from server. Status Code: {} Data from server: {}".format(
+            r.status_code, r.text.replace("{", "{{").replace("}", "}}")
+        )
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
     def _make_rest_call(self, get_string, action_result):
-
         resp_json = None
 
         request_func = getattr(requests, "get")
@@ -150,7 +143,7 @@ class MalshareConnector(BaseConnector):
             r = request_func(self._api_url + get_string)
 
         except Exception as e:
-            return RetVal(action_result.set_status( phantom.APP_ERROR, "Error Connecting to server. Details: {0}".format(str(e))), resp_json)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {e!s}"), resp_json)
 
         return self._process_response(r, action_result)
 
@@ -159,7 +152,7 @@ class MalshareConnector(BaseConnector):
         self.save_progress("Connecting to endpoint")
 
         # Test connectivity by retrieving and validating a list of hashes
-        ret_val, response = self._make_rest_call('getlistraw', action_result)
+        ret_val, response = self._make_rest_call("getlistraw", action_result)
 
         if phantom.is_fail(ret_val):
             self.save_progress("Test Connectivity Failed")
@@ -169,20 +162,20 @@ class MalshareConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_list_hashes(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         self.save_progress("Connecting to endpoint")
 
-        if "file_type" in param and param["file_type"]:
-            ret_val, response = self._make_rest_call('type&type=' + param["file_type"], action_result)
+        if param.get("file_type"):
+            ret_val, response = self._make_rest_call("type&type=" + param["file_type"], action_result)
 
         else:
-            ret_val, response = self._make_rest_call('getlistraw', action_result)
+            ret_val, response = self._make_rest_call("getlistraw", action_result)
 
         if phantom.is_fail(ret_val):
-            self.save_progress("Hash List request failed. Error: {0}".format(action_result.get_message()))
+            self.save_progress(f"Hash List request failed. Error: {action_result.get_message()}")
             return action_result.get_status()
 
         hash_count = 0
@@ -191,7 +184,7 @@ class MalshareConnector(BaseConnector):
             action_result.add_data({"md5": hash_entry})
             hash_count += 1
 
-        action_result.update_summary({'hash_count': hash_count})
+        action_result.update_summary({"hash_count": hash_count})
 
         if hash_count <= 0:
             self.save_progress("Unable to extract any hashes from the hash list response")
@@ -201,15 +194,15 @@ class MalshareConnector(BaseConnector):
             return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_list_urls(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         self.save_progress("Connecting to endpoint")
-        ret_val, response = self._make_rest_call('getsourcesraw', action_result)
+        ret_val, response = self._make_rest_call("getsourcesraw", action_result)
 
         if phantom.is_fail(ret_val):
-            self.save_progress("Sources List request failed. Error: {0}".format(action_result.get_message()))
+            self.save_progress(f"Sources List request failed. Error: {action_result.get_message()}")
             return action_result.get_status()
 
         source_count = 0
@@ -219,7 +212,7 @@ class MalshareConnector(BaseConnector):
                 action_result.add_data({"source": url})
                 source_count += 1
 
-        action_result.update_summary({'source_count': source_count})
+        action_result.update_summary({"source_count": source_count})
 
         if source_count == 0:
             self.save_progress("Unable to extract any sources from the source list")
@@ -229,23 +222,23 @@ class MalshareConnector(BaseConnector):
             return action_result.set_status(phantom.APP_SUCCESS)
 
     def _handle_get_file_info(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         self.save_progress("Connecting to endpoint")
-        ret_val, response = self._make_rest_call('details&hash=' + str(param["hash"]), action_result)
+        ret_val, response = self._make_rest_call("details&hash=" + str(param["hash"]), action_result)
 
         if phantom.is_fail(ret_val):
-            self.save_progress("File Info request failed. Error: {0}".format(action_result.get_message()))
+            self.save_progress(f"File Info request failed. Error: {action_result.get_message()}")
             return action_result.get_status()
 
         if response is None:
-            action_result.update_summary({'file_info_found': False})
+            action_result.update_summary({"file_info_found": False})
             self.save_progress("Unable to find info for hash: " + str(param["hash"]))
             return action_result.set_status(phantom.APP_SUCCESS, "Sample not found by hash " + str(param["hash"]))
 
-        action_result.update_summary({'file_info_found': True})
+        action_result.update_summary({"file_info_found": True})
 
         action_result.add_data(response)
 
@@ -253,30 +246,29 @@ class MalshareConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _save_file_to_vault(self, action_result, response_attachment, sample_hash):
-
         # Create a tmp directory on the vault partition
         guid = uuid.uuid4()
 
-        if hasattr(ph_rules.Vault, 'get_vault_tmp_dir'):
+        if hasattr(ph_rules.Vault, "get_vault_tmp_dir"):
             temp_dir = ph_rules.Vault.get_vault_tmp_dir()
         else:
-            temp_dir = '/vault/tmp'
+            temp_dir = "/vault/tmp"
 
-        local_dir = temp_dir + '/{}'.format(guid)
-        self.save_progress("Using temp directory: {0}".format(guid))
+        local_dir = temp_dir + f"/{guid}"
+        self.save_progress(f"Using temp directory: {guid}")
 
         try:
             os.makedirs(local_dir)
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Unable to create temporary folder {0}".format(temp_dir), e)
+            return action_result.set_status(phantom.APP_ERROR, f"Unable to create temporary folder {temp_dir}", e)
 
-        file_path = "{0}/{1}".format(local_dir, sample_hash)
+        file_path = f"{local_dir}/{sample_hash}"
 
         # open and download the file
-        with open(file_path, 'wb') as f:
+        with open(file_path, "wb") as f:
             f.write(response_attachment)
 
-        file_name = '{}'.format(sample_hash)
+        file_name = f"{sample_hash}"
 
         # move the file to the vault
         success, message, vault_id = ph_rules.vault_add(file_location=file_path, container=self.get_container_id(), file_name=file_name)
@@ -300,19 +292,19 @@ class MalshareConnector(BaseConnector):
         return action_result.get_status()
 
     def _handle_get_file(self, param):
-        self.save_progress("In action handler for: {0}".format(self.get_action_identifier()))
+        self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
         self.save_progress("Connecting to endpoint")
-        ret_val, response = self._make_rest_call('getfile&hash=' + str(param["hash"]), action_result)
+        ret_val, response = self._make_rest_call("getfile&hash=" + str(param["hash"]), action_result)
 
         if phantom.is_fail(ret_val):
-            self.save_progress("File Info request failed. Error: {0}".format(action_result.get_message()))
+            self.save_progress(f"File Info request failed. Error: {action_result.get_message()}")
             return action_result.get_status()
 
         if response is None:
-            action_result.update_summary({'file_found': False})
+            action_result.update_summary({"file_found": False})
             self.save_progress("Unable to find sample for hash: " + str(param["hash"]))
             action_result.add_data({param["hash"]: False})
             return action_result.set_status(phantom.APP_SUCCESS, "Sample not found by hash")
@@ -320,10 +312,10 @@ class MalshareConnector(BaseConnector):
         ret_val = self._save_file_to_vault(action_result, response, param["hash"])
 
         if phantom.is_fail(ret_val):
-            self.save_progress("Error occurred while saving the file to vault failed. Error: {0}".format(action_result.get_message()))
+            self.save_progress(f"Error occurred while saving the file to vault failed. Error: {action_result.get_message()}")
             return action_result.get_status()
 
-        action_result.update_summary({'file_found': True})
+        action_result.update_summary({"file_found": True})
         self.save_progress("Sample retrieved for hash: " + str(param["hash"]))
         return action_result.set_status(phantom.APP_SUCCESS)
 
@@ -334,19 +326,19 @@ class MalshareConnector(BaseConnector):
 
         self.debug_print("action_id", self.get_action_identifier())
 
-        if action_id == 'test_connectivity':
+        if action_id == "test_connectivity":
             ret_val = self._handle_test_connectivity(param)
 
-        elif action_id == 'list_hashes':
+        elif action_id == "list_hashes":
             ret_val = self._handle_list_hashes(param)
 
-        elif action_id == 'list_urls':
+        elif action_id == "list_urls":
             ret_val = self._handle_list_urls(param)
 
-        elif action_id == 'get_file_info':
+        elif action_id == "get_file_info":
             ret_val = self._handle_get_file_info(param)
 
-        elif action_id == 'get_file':
+        elif action_id == "get_file":
             ret_val = self._handle_get_file(param)
 
         return ret_val
@@ -366,10 +358,11 @@ class MalshareConnector(BaseConnector):
         return phantom.APP_SUCCESS
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     import sys
 
     import pudb
+
     pudb.set_trace()
 
     if len(sys.argv) < 2:
