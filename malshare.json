@@ -10,12 +10,15 @@
     "product_version_regex": ".*",
     "publisher": "Splunk",
     "license": "Copyright (c) 2017-2025 Splunk Inc.",
-    "app_version": "2.1.9",
-    "utctime_updated": "2025-04-11T17:35:27.709253Z",
+    "app_version": "2.1.10",
+    "utctime_updated": "2025-07-30T17:48:41.353200Z",
     "package_name": "phantom_malshare",
     "main_module": "malshare_connector.py",
     "min_phantom_version": "5.1.0",
-    "python_version": ["3.9", "3.13"],
+    "python_version": [
+        "3.9",
+        "3.13"
+    ],
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, tested on 15th September, 2021"
