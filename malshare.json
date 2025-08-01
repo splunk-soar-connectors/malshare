@@ -15,10 +15,7 @@
     "package_name": "phantom_malshare",
     "main_module": "malshare_connector.py",
     "min_phantom_version": "5.1.0",
-    "python_version": [
-        "3.9",
-        "3.13"
-    ],
+    "python_version": "3.9, 3.13",
     "fips_compliant": true,
     "latest_tested_versions": [
         "Cloud, tested on 15th September, 2021"
