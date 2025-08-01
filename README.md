@@ -1,7 +1,7 @@
 # MalShare
 
 Publisher: Splunk \
-Connector Version: 2.1.10 \
+Connector Version: 2.1.11 \
 Product Vendor: MalShare \
 Product Name: MalShare \
 Minimum Product Version: 5.1.0
