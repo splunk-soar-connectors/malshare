@@ -1,9 +1,9 @@
 # MalShare
 
-Publisher: Splunk \
-Connector Version: 2.1.11 \
-Product Vendor: MalShare \
-Product Name: MalShare \
+Publisher: Splunk <br>
+Connector Version: 2.1.11 <br>
+Product Vendor: MalShare <br>
+Product Name: MalShare <br>
 Minimum Product Version: 5.1.0
 
 This app integrates with MalShare to provide several investigative actions
@@ -18,17 +18,17 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration \
-[list hashes](#action-list-hashes) - List the MD5 hashes from the past 24 hours \
-[list urls](#action-list-urls) - List the sample sources from the past 24 hours \
-[get file info](#action-get-file-info) - Get the file details associated with a hash \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity using supplied configuration <br>
+[list hashes](#action-list-hashes) - List the MD5 hashes from the past 24 hours <br>
+[list urls](#action-list-urls) - List the sample sources from the past 24 hours <br>
+[get file info](#action-get-file-info) - Get the file details associated with a hash <br>
 [get file](#action-get-file) - Get the file associated with a hash
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity using supplied configuration
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -43,7 +43,7 @@ No Output
 
 List the MD5 hashes from the past 24 hours
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -71,7 +71,7 @@ action_result.data.\*.md5.sha256 | string | | bdf3eac218cda881ec145d4b3c650fc26b
 
 List the sample sources from the past 24 hours
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -93,7 +93,7 @@ summary.total_objects_successful | numeric | | 1 |
 
 Get the file details associated with a hash
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -123,7 +123,7 @@ action_result.summary.file_info_found | boolean | | True False |
 
 Get the file associated with a hash
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -151,7 +151,7 @@ ______________________________________________________________________
 
 Auto-generated Splunk SOAR Connector documentation.
 
-Copyright 2025 Splunk Inc.
+Copyright 2026 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
