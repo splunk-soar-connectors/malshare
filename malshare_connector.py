@@ -143,7 +143,10 @@ class MalshareConnector(BaseConnector):
             r = request_func(self._api_url + get_string)
 
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {e!s}"), resp_json)
+            # Request exceptions can contain the complete URL, including the
+            # API key stored in its query string. Report only the exception
+            # type in the persisted action result.
+            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error connecting to server: {type(e).__name__}"), resp_json)
 
         return self._process_response(r, action_result)
 
