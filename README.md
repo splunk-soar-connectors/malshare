@@ -124,7 +124,7 @@ action_result.summary.file_info_found | boolean | | True False |
 Get the file associated with a hash
 
 Type: **investigate** <br>
-Read only: **True**
+Read only: **False**
 
 #### Action Parameters
 

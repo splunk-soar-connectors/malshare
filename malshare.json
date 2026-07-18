@@ -372,7 +372,7 @@
             "identifier": "get_file",
             "description": "Get the file associated with a hash",
             "type": "investigate",
-            "read_only": true,
+            "read_only": false,
             "parameters": {
                 "hash": {
                     "description": "The hash of the file to be queried",
