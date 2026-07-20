@@ -1,6 +1,6 @@
 # File: malshare_connector.py
 #
-# Copyright (c) 2017-2025 Splunk Inc.
+# Copyright (c) 2017-2026 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,6 +15,7 @@
 #
 #
 # Phantom App imports
+import hashlib
 import json
 import os
 import shutil
@@ -143,7 +144,10 @@ class MalshareConnector(BaseConnector):
             r = request_func(self._api_url + get_string)
 
         except Exception as e:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error Connecting to server. Details: {e!s}"), resp_json)
+            # Request exceptions can contain the complete URL, including the
+            # API key stored in its query string. Report only the exception
+            # type in the persisted action result.
+            return RetVal(action_result.set_status(phantom.APP_ERROR, f"Error connecting to server: {type(e).__name__}"), resp_json)
 
         return self._process_response(r, action_result)
 
@@ -291,6 +295,15 @@ class MalshareConnector(BaseConnector):
 
         return action_result.get_status()
 
+    @staticmethod
+    def _sample_matches_hash(response_attachment, sample_hash):
+        algorithm = {32: "md5", 40: "sha1", 64: "sha256"}.get(len(sample_hash))
+        if algorithm is None:
+            return False
+
+        digest = hashlib.new(algorithm, response_attachment, usedforsecurity=False).hexdigest()
+        return digest.casefold() == sample_hash.casefold()
+
     def _handle_get_file(self, param):
         self.save_progress(f"In action handler for: {self.get_action_identifier()}")
 
@@ -308,6 +321,9 @@ class MalshareConnector(BaseConnector):
             self.save_progress("Unable to find sample for hash: " + str(param["hash"]))
             action_result.add_data({param["hash"]: False})
             return action_result.set_status(phantom.APP_SUCCESS, "Sample not found by hash")
+
+        if not self._sample_matches_hash(response, param["hash"]):
+            return action_result.set_status(phantom.APP_ERROR, "Downloaded content does not match the requested sample hash")
 
         ret_val = self._save_file_to_vault(action_result, response, param["hash"])
 

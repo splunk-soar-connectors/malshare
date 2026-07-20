@@ -9,7 +9,7 @@
     "product_name": "MalShare",
     "product_version_regex": ".*",
     "publisher": "Splunk",
-    "license": "Copyright (c) 2017-2025 Splunk Inc.",
+    "license": "Copyright (c) 2017-2026 Splunk Inc.",
     "app_version": "2.1.11",
     "utctime_updated": "2025-08-01T20:34:19.247553Z",
     "package_name": "phantom_malshare",
@@ -372,7 +372,7 @@
             "identifier": "get_file",
             "description": "Get the file associated with a hash",
             "type": "investigate",
-            "read_only": true,
+            "read_only": false,
             "parameters": {
                 "hash": {
                     "description": "The hash of the file to be queried",
@@ -497,5 +497,11 @@
             },
             "versions": "EQ(*)"
         }
-    ]
+    ],
+    "pip39_dependencies": {
+        "wheel": []
+    },
+    "pip313_dependencies": {
+        "wheel": []
+    }
 }
